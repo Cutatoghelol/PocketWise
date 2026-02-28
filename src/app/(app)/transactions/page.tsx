@@ -39,16 +39,17 @@ export default function TransactionsPage() {
     const loadData = useCallback(async () => {
         setLoading(true);
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        if (!user) { setLoading(false); return; }
 
         // Load categories
         const { data: cats } = await supabase.from('categories').select('id, name, icon').order('name');
         if (cats) setCategories(cats);
 
-        // Load transactions
+        // Load transactions — build date range manually to avoid timezone issues
         const [year, month] = filterMonth.split('-').map(Number);
-        const startDate = new Date(year, month - 1, 1).toISOString().split('T')[0];
-        const endDate = new Date(year, month, 0).toISOString().split('T')[0];
+        const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
+        const lastDay = new Date(year, month, 0).getDate();
+        const endDate = `${year}-${String(month).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
 
         let query = supabase
             .from('transactions')
@@ -62,9 +63,11 @@ export default function TransactionsPage() {
             query = query.eq('category_id', filterCategory);
         }
 
-        const { data: txns } = await query;
+        const { data: txns, error } = await query;
+        if (error) console.error('Transaction load error:', error);
         setTransactions((txns || []) as Transaction[]);
         setLoading(false);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filterMonth, filterCategory]);
 
     useEffect(() => {

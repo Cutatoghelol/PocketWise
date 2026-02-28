@@ -55,11 +55,13 @@ export default function DashboardPage() {
             .single();
         if (profile) setMonthBudget(Number(profile.monthly_budget));
 
-        // Get transactions for this month
+        // Get transactions for this month — use local dates to avoid timezone shifts
         const now = new Date();
-        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
-        const today = now.toISOString().split('T')[0];
-        const weekAgo = new Date(now.getTime() - 7 * 86400000).toISOString().split('T')[0];
+        const pad = (n: number) => String(n).padStart(2, '0');
+        const monthStart = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-01`;
+        const today = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+        const wk = new Date(now.getTime() - 7 * 86400000);
+        const weekAgo = `${wk.getFullYear()}-${pad(wk.getMonth() + 1)}-${pad(wk.getDate())}`;
 
         const { data: txns } = await supabase
             .from('transactions')
@@ -88,7 +90,7 @@ export default function DashboardPage() {
         const days: DailySpend[] = [];
         for (let i = 6; i >= 0; i--) {
             const d = new Date(now.getTime() - i * 86400000);
-            const dateStr = d.toISOString().split('T')[0];
+            const dateStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
             const dayName = d.toLocaleDateString('vi-VN', { weekday: 'short' });
             const amount = allTxns
                 .filter(t => t.transaction_date === dateStr)
