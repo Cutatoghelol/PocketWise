@@ -36,7 +36,9 @@ export async function POST() {
         const totalSpent = transactions.reduce((s, t) => s + Number(t.amount), 0);
         const categoryTotals: Record<string, number> = {};
         transactions.forEach(t => {
-            const cat = (t.categories as { name: string } | null)?.name || 'Khác';
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const cats = t.categories as any;
+            const cat = (Array.isArray(cats) ? cats[0]?.name : cats?.name) || 'Khác';
             categoryTotals[cat] = (categoryTotals[cat] || 0) + Number(t.amount);
         });
 
