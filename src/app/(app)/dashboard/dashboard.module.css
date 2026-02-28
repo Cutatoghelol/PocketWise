@@ -1,0 +1,39 @@
+.aiCard {
+    padding: var(--space-lg);
+    margin-bottom: var(--space-xl);
+}
+
+.aiHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+}
+
+.aiHeader h3 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.aiContent {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    white-space: pre-line;
+}
+
+.recentCard {
+    padding: var(--space-lg);
+}
+
+.recentHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+}
+
+.recentHeader h3 {
+    font-size: 1rem;
+    font-weight: 600;
+}

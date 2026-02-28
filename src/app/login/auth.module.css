@@ -1,0 +1,140 @@
+.authContainer {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.authCard {
+    width: 100%;
+    max-width: 420px;
+    background: rgba(20, 20, 50, 0.8);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-xl);
+    padding: var(--space-2xl);
+    position: relative;
+    z-index: 2;
+    animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.authHeader {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+}
+
+.authLogo {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: var(--space-md);
+    animation: pulse 2s infinite;
+}
+
+.authHeader h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: var(--space-sm);
+}
+
+.authHeader p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.authBtn {
+    width: 100%;
+    margin-top: var(--space-sm);
+    padding: var(--space-md) !important;
+    font-size: 1rem !important;
+}
+
+.authBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.authSwitch {
+    text-align: center;
+    margin-top: var(--space-lg);
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.authSwitch a {
+    color: var(--accent-primary-light);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.authSwitch a:hover {
+    color: var(--accent-primary);
+    text-decoration: underline;
+}
+
+/* Decorative Background Orbs */
+.bgOrb1,
+.bgOrb2,
+.bgOrb3 {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.bgOrb1 {
+    width: 400px;
+    height: 400px;
+    background: rgba(124, 58, 237, 0.2);
+    top: -100px;
+    right: -100px;
+    animation: float 8s ease-in-out infinite;
+}
+
+.bgOrb2 {
+    width: 300px;
+    height: 300px;
+    background: rgba(59, 130, 246, 0.15);
+    bottom: -50px;
+    left: -50px;
+    animation: float 10s ease-in-out infinite reverse;
+}
+
+.bgOrb3 {
+    width: 200px;
+    height: 200px;
+    background: rgba(236, 72, 153, 0.1);
+    top: 50%;
+    left: 50%;
+    animation: float 12s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+
+    25% {
+        transform: translate(20px, -30px);
+    }
+
+    50% {
+        transform: translate(-15px, 20px);
+    }
+
+    75% {
+        transform: translate(25px, 15px);
+    }
+}

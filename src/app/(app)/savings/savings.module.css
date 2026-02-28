@@ -1,0 +1,118 @@
+.goalsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: var(--space-md);
+}
+
+.goalCard {
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.goalHeader {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+}
+
+.goalIcon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.goalInfo {
+    flex: 1;
+}
+
+.goalInfo h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.goalDeadline {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+    display: block;
+}
+
+.completedBadge {
+    background: rgba(34, 197, 94, 0.15);
+    color: var(--accent-success);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    flex-shrink: 0;
+}
+
+.goalProgress {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.goalAmounts {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-xs);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.goalTarget {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--text-muted);
+}
+
+.goalPercent {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-align: right;
+}
+
+.goalActions {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+}
+
+.goalFooter {
+    display: flex;
+    gap: var(--space-sm);
+    justify-content: flex-end;
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--border-glass);
+}
+
+/* Icon Picker */
+.iconPicker {
+    display: flex;
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+}
+
+.iconOption {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--border-glass);
+    border-radius: var(--radius-md);
+    background: var(--bg-glass);
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.iconOption:hover {
+    border-color: var(--accent-primary);
+    background: var(--bg-glass-strong);
+}
+
+.iconActive {
+    border-color: var(--accent-primary) !important;
+    background: rgba(124, 58, 237, 0.2) !important;
+    box-shadow: 0 0 12px rgba(124, 58, 237, 0.3);
+}
