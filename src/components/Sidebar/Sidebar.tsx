@@ -19,6 +19,13 @@ export default function Sidebar() {
     const [user, setUser] = useState<{ email?: string; display_name?: string } | null>(null);
     const [collapsed, setCollapsed] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
+    const [currentPw, setCurrentPw] = useState('');
+    const [newPw, setNewPw] = useState('');
+    const [confirmPw, setConfirmPw] = useState('');
+    const [pwLoading, setPwLoading] = useState(false);
+    const [pwMsg, setPwMsg] = useState('');
+    const [pwError, setPwError] = useState('');
     const supabase = createClient();
 
     useEffect(() => {
@@ -42,6 +49,37 @@ export default function Sidebar() {
     const handleLogout = async () => {
         await supabase.auth.signOut();
         router.push('/login');
+    };
+
+    const handleChangePassword = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setPwError('');
+        setPwMsg('');
+
+        if (newPw.length < 6) { setPwError('Mật khẩu mới phải có ít nhất 6 ký tự.'); return; }
+        if (newPw !== confirmPw) { setPwError('Mật khẩu xác nhận không khớp.'); return; }
+
+        setPwLoading(true);
+        // Verify current password by re-signing in
+        const { error: signInErr } = await supabase.auth.signInWithPassword({
+            email: user?.email || '',
+            password: currentPw,
+        });
+        if (signInErr) {
+            setPwError('Mật khẩu hiện tại không đúng.');
+            setPwLoading(false);
+            return;
+        }
+
+        const { error: updateErr } = await supabase.auth.updateUser({ password: newPw });
+        if (updateErr) {
+            setPwError(updateErr.message);
+        } else {
+            setPwMsg('Đổi mật khẩu thành công!');
+            setCurrentPw(''); setNewPw(''); setConfirmPw('');
+            setTimeout(() => { setShowPasswordModal(false); setPwMsg(''); }, 1500);
+        }
+        setPwLoading(false);
     };
 
     return (
@@ -102,11 +140,50 @@ export default function Sidebar() {
                     >
                         {collapsed ? '➡️' : '⬅️'}
                     </button>
+                    <button
+                        className={styles.logoutBtn}
+                        onClick={() => { setShowPasswordModal(true); setPwError(''); setPwMsg(''); setCurrentPw(''); setNewPw(''); setConfirmPw(''); }}
+                        title="Đổi mật khẩu"
+                    >
+                        🔒
+                    </button>
                     <button className={styles.logoutBtn} onClick={handleLogout} title="Đăng xuất">
                         🚪
                     </button>
                 </div>
             </aside>
+
+            {/* Change Password Modal */}
+            {showPasswordModal && (
+                <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && setShowPasswordModal(false)}>
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h2>🔒 Đổi mật khẩu</h2>
+                            <button className="modal-close" onClick={() => setShowPasswordModal(false)}>&times;</button>
+                        </div>
+                        {pwMsg && <div className="alert alert-success">✅ {pwMsg}</div>}
+                        {pwError && <div className="alert alert-error">⚠️ {pwError}</div>}
+                        <form onSubmit={handleChangePassword}>
+                            <div className="form-group">
+                                <label className="input-label">Mật khẩu hiện tại</label>
+                                <input type="password" className="input-field" placeholder="••••••••" value={currentPw} onChange={e => setCurrentPw(e.target.value)} required />
+                            </div>
+                            <div className="form-group">
+                                <label className="input-label">Mật khẩu mới</label>
+                                <input type="password" className="input-field" placeholder="Ít nhất 6 ký tự" value={newPw} onChange={e => setNewPw(e.target.value)} required minLength={6} />
+                            </div>
+                            <div className="form-group">
+                                <label className="input-label">Xác nhận mật khẩu mới</label>
+                                <input type="password" className="input-field" placeholder="••••••••" value={confirmPw} onChange={e => setConfirmPw(e.target.value)} required minLength={6} />
+                            </div>
+                            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                                <button type="button" className="btn btn-ghost" onClick={() => setShowPasswordModal(false)} style={{ flex: 1 }}>Hủy</button>
+                                <button type="submit" className="btn btn-primary" disabled={pwLoading} style={{ flex: 1 }}>{pwLoading ? '⏳...' : '💾 Lưu'}</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </>
     );
 }

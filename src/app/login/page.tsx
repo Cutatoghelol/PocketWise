@@ -80,6 +80,9 @@ export default function LoginPage() {
                     </button>
                 </form>
 
+                <p className={styles.authSwitch} style={{ marginBottom: '4px' }}>
+                    <Link href="/forgot-password" style={{ fontSize: '0.85rem' }}>🔑 Quên mật khẩu?</Link>
+                </p>
                 <p className={styles.authSwitch}>
                     Chưa có tài khoản?{' '}
                     <Link href="/signup">Đăng ký ngay</Link>
