@@ -12,6 +12,7 @@ export default function SignupPage() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [signedUp, setSignedUp] = useState(false);
     const router = useRouter();
     const supabase = createClient();
 
@@ -40,8 +41,8 @@ export default function SignupPage() {
             setError(authError.message);
             setLoading(false);
         } else {
-            router.push('/dashboard');
-            router.refresh();
+            setSignedUp(true);
+            setLoading(false);
         }
     };
 
@@ -54,60 +55,80 @@ export default function SignupPage() {
                     <p>Bắt đầu quản lý chi tiêu thông minh ngay hôm nay</p>
                 </div>
 
-                {error && (
-                    <div className="alert alert-error">
-                        ⚠️ {error}
+                {signedUp ? (
+                    <div style={{ textAlign: 'center', padding: 'var(--space-lg) 0' }}>
+                        <div style={{ fontSize: '3.5rem', marginBottom: '16px' }}>📧</div>
+                        <h3 style={{ color: 'var(--text-primary)', marginBottom: '12px' }}>Kiểm tra email của bạn!</h3>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.7 }}>
+                            Chúng tôi đã gửi một email xác nhận đến<br />
+                            <strong style={{ color: 'var(--accent-primary-light)' }}>{email}</strong>
+                        </p>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem', marginTop: '16px', lineHeight: 1.6 }}>
+                            Nhấn vào liên kết trong email để kích hoạt tài khoản.<br />
+                            Không thấy email? Hãy kiểm tra thư mục <strong>Spam</strong>.
+                        </p>
+                        <Link href="/login" className="btn btn-primary" style={{ marginTop: '20px', display: 'inline-block' }}>
+                            → Đăng nhập
+                        </Link>
                     </div>
+                ) : (
+                    <>
+                        {error && (
+                            <div className="alert alert-error">
+                                ⚠️ {error}
+                            </div>
+                        )}
+
+                        <form onSubmit={handleSignup}>
+                            <div className="form-group">
+                                <label className="input-label">Tên hiển thị</label>
+                                <input
+                                    type="text"
+                                    className="input-field"
+                                    placeholder="Nguyễn Văn A"
+                                    value={displayName}
+                                    onChange={(e) => setDisplayName(e.target.value)}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label className="input-label">Email</label>
+                                <input
+                                    type="email"
+                                    className="input-field"
+                                    placeholder="ten@email.com"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label className="input-label">Mật khẩu</label>
+                                <input
+                                    type="password"
+                                    className="input-field"
+                                    placeholder="Ít nhất 6 ký tự"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    minLength={6}
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                className={`btn btn-primary btn-lg ${styles.authBtn}`}
+                                disabled={loading}
+                            >
+                                {loading ? '⏳ Đang tạo tài khoản...' : '✨ Đăng ký miễn phí'}
+                            </button>
+                        </form>
+
+                        <p className={styles.authSwitch}>
+                            Đã có tài khoản?{' '}
+                            <Link href="/login">Đăng nhập</Link>
+                        </p>
+                    </>
                 )}
-
-                <form onSubmit={handleSignup}>
-                    <div className="form-group">
-                        <label className="input-label">Tên hiển thị</label>
-                        <input
-                            type="text"
-                            className="input-field"
-                            placeholder="Nguyễn Văn A"
-                            value={displayName}
-                            onChange={(e) => setDisplayName(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label className="input-label">Email</label>
-                        <input
-                            type="email"
-                            className="input-field"
-                            placeholder="ten@email.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label className="input-label">Mật khẩu</label>
-                        <input
-                            type="password"
-                            className="input-field"
-                            placeholder="Ít nhất 6 ký tự"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            minLength={6}
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        className={`btn btn-primary btn-lg ${styles.authBtn}`}
-                        disabled={loading}
-                    >
-                        {loading ? '⏳ Đang tạo tài khoản...' : '✨ Đăng ký miễn phí'}
-                    </button>
-                </form>
-
-                <p className={styles.authSwitch}>
-                    Đã có tài khoản?{' '}
-                    <Link href="/login">Đăng nhập</Link>
-                </p>
             </div>
 
             <div className={styles.bgOrb1} />
