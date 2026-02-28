@@ -36,6 +36,8 @@ export default function DashboardPage() {
     const [monthTotal, setMonthTotal] = useState(0);
     const [monthBudget, setMonthBudget] = useState(500000);
     const [showModal, setShowModal] = useState(false);
+    const [showBudgetModal, setShowBudgetModal] = useState(false);
+    const [budgetInput, setBudgetInput] = useState('');
     const [aiInsight, setAiInsight] = useState('');
     const [aiLoading, setAiLoading] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -131,6 +133,22 @@ export default function DashboardPage() {
         loadData();
     }, [loadData]);
 
+    const handleDeleteTx = async (id: string) => {
+        if (!confirm('Bạn có chắc muốn xóa giao dịch này?')) return;
+        await supabase.from('transactions').delete().eq('id', id);
+        loadData();
+    };
+
+    const handleSaveBudget = async () => {
+        const newBudget = Number(budgetInput);
+        if (!newBudget || newBudget <= 0) return;
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        await supabase.from('profiles').update({ monthly_budget: newBudget }).eq('id', user.id);
+        setMonthBudget(newBudget);
+        setShowBudgetModal(false);
+    };
+
     const budgetPercent = monthBudget > 0 ? Math.min((monthTotal / monthBudget) * 100, 100) : 0;
 
     return (
@@ -157,10 +175,13 @@ export default function DashboardPage() {
                     <div className="stat-value">{formatVND(monthTotal)}</div>
                     <div className="stat-label">Tháng này</div>
                 </div>
-                <div className="glass-card stat-card">
-                    <div className="stat-icon">🎯</div>
+                <div className="glass-card stat-card" onClick={() => { setBudgetInput(String(monthBudget)); setShowBudgetModal(true); }} style={{ cursor: 'pointer' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div className="stat-icon">🎯</div>
+                        <span style={{ fontSize: '0.7rem', color: 'var(--accent-primary-light)', opacity: 0.8 }}>✏️ Chỉnh sửa</span>
+                    </div>
                     <div className="stat-value">{budgetPercent.toFixed(0)}%</div>
-                    <div className="stat-label">Ngân sách đã dùng</div>
+                    <div className="stat-label">Ngân sách: {formatVND(monthBudget)}</div>
                     <div className="progress-bar" style={{ marginTop: '8px' }}>
                         <div
                             className="progress-fill"
@@ -302,6 +323,13 @@ export default function DashboardPage() {
                                 </div>
                             </div>
                             <div className="transaction-amount">-{formatVND(Number(tx.amount))}</div>
+                            <button
+                                className="btn btn-danger btn-sm"
+                                onClick={() => handleDeleteTx(tx.id)}
+                                title="Xóa"
+                            >
+                                🗑️
+                            </button>
                         </div>
                     ))}
                     {transactions.length === 0 && !loading && (
@@ -323,6 +351,41 @@ export default function DashboardPage() {
                         loadData();
                     }}
                 />
+            )}
+
+            {/* Budget Edit Modal */}
+            {showBudgetModal && (
+                <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && setShowBudgetModal(false)}>
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h2>🎯 Điều chỉnh ngân sách</h2>
+                            <button className="modal-close" onClick={() => setShowBudgetModal(false)}>&times;</button>
+                        </div>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: 'var(--space-md)' }}>
+                            Đặt ngân sách hàng tháng để theo dõi chi tiêu hiệu quả hơn.
+                        </p>
+                        <div className="form-group">
+                            <label className="input-label">Ngân sách hàng tháng (VNĐ)</label>
+                            <input
+                                type="number"
+                                className="input-field"
+                                placeholder="500000"
+                                value={budgetInput}
+                                onChange={(e) => setBudgetInput(e.target.value)}
+                                min="1"
+                                autoFocus
+                            />
+                        </div>
+                        <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                            <button className="btn btn-ghost" onClick={() => setShowBudgetModal(false)} style={{ flex: 1 }}>
+                                Hủy
+                            </button>
+                            <button className="btn btn-primary" onClick={handleSaveBudget} style={{ flex: 1 }}>
+                                💾 Lưu
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );
