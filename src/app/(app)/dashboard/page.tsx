@@ -193,7 +193,8 @@ export default function DashboardPage() {
                                         borderRadius: '12px',
                                         color: '#f0f0ff',
                                     }}
-                                    formatter={(value) => [formatVND(value as number), 'Chi tiêu']}
+                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                    formatter={(value: any) => [formatVND(Number(value)), 'Chi tiêu']}
                                 />
                                 <Bar dataKey="amount" fill="url(#barGradient)" radius={[6, 6, 0, 0]} />
                                 <defs>
@@ -240,7 +241,8 @@ export default function DashboardPage() {
                                         borderRadius: '12px',
                                         color: '#f0f0ff',
                                     }}
-                                    formatter={(value) => [formatVND(value as number), 'Chi tiêu']}
+                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                    formatter={(value: any) => [formatVND(Number(value)), 'Chi tiêu']}
                                 />
                                 <Legend
                                     formatter={(value) => <span style={{ color: '#a0a0c0', fontSize: '0.8rem' }}>{value}</span>}
